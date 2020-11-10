@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Tic Tac Toe Game</title>
+        <link href="https://fonts.googleapis.com/css2?family=Roboto&family=Permanent+Marker&display=swap" rel="stylesheet"> 
+        <link href="style.css" rel="stylesheet">
+    </head>
+    <body>
+        <section id="settings-and-codesweetly-btns">
+            <i id="open-settings-modal" class="fas fa-cog"></i>
+            <a id="codesweetly-link" href="https://www.codesweetly.com/" target="_blank"><i class="fas fa-arrow-alt-circle-right"></i></a>
+        </section>
+        <section id="tic-tac-toe-grid">
+            <span>X</span>
+            <span>O</span>
+            <span>X</span>
+            <span>O</span>
+            <span>X</span>
+            <span>O</span>
+            <span>X</span>
+            <span>O</span>
+            <span>X</span>
+        </section>
+        <section id="scoreboard">
+            <span class="scoreb-upper score">4</span>
+            <span class="scoreb-upper arrow"><i class="fas fa-caret-left"></i></span>
+            <span id="congrat-text">
+                <p>Congragulations 1234567890123456</p>
+                <p>You are the Winner!</p>
+            </span>
+            <span class="scoreb-upper arrow"><i class="fas fa-caret-right"></i></span>
+            <span class="scoreb-upper score">3</span>
+            <span class="scoreb-lower player">Player X</span>
+            <button id="new-game-btn" class="scoreb-lower">New Game</button>
+            <button id="next-round-btn" class="scoreb-lower">Next Round</button>
+            <span class="scoreb-lower player">Computer</span>
+        </section>
+        
+        
+        <aside id="settings-modal-bg">
+            <div id="settings-modal-box">
+                <div id="close-settings-modal"><i class="fas fa-times"></i></div>
+                <form>
+                    <label>Player X</label>
+                    <select>
+                        <option>Human</option>
+                        <option>Computer</option>
+                    </select>
+                    <select>
+                        <option>Easy</option>
+                        <option>Medium</option>
+                        <option>Hard</option>
+                    </select>
+                    <input type="text" maxlength="16" placeholder="Player X's Name">
+                </form>
+                <form>
+                    <label>Player O</label>
+                    <select>
+                        <option>Human</option>
+                        <option>Computer</option>
+                    </select>
+                    <select>
+                        <option>Easy</option>
+                        <option>Medium</option>
+                        <option>Hard</option>
+                    </select>
+                    <input type="text" maxlength="16" placeholder="Player O's Name">
+                </form>
+                <button id="sound"><i class="fas fa-volume-up"></i> ON</button>
+                <footer><a href="https://www.codesweetly.com/" target="_blank">Created by Oluwatobi Sofela <i class="fas fa-arrow-alt-circle-right"></i></a></footer>
+            </div>
+        </aside>
+        <script src="script.js"></script>
+        <script src="https://kit.fontawesome.com/465e3a1049.js" crossorigin="anonymous"></script>
+    </body>
+</html>
