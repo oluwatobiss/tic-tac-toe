@@ -3,13 +3,13 @@
     <head>
         <meta charset="UTF-8">
         <title>Tic Tac Toe Game</title>
-        <link href="https://fonts.googleapis.com/css2?family=Roboto&family=Permanent+Marker&display=swap" rel="stylesheet"> 
+        <link href="https://fonts.googleapis.com/css2?family=Cabin+Sketch&family=Roboto&family=Permanent+Marker&display=swap" rel="stylesheet"> 
         <link href="style.css" rel="stylesheet">
     </head>
     <body>
         <section id="settings-and-codesweetly-btns">
-            <i id="open-settings-modal" class="fas fa-cog"></i>
-            <a id="codesweetly-link" href="https://www.codesweetly.com/" target="_blank"><i class="fas fa-arrow-alt-circle-right"></i></a>
+            <i id="open-settings-modal" class="fas fa-cog" aria-label="Settings"></i>
+            <a id="codesweetly-link" href="https://www.codesweetly.com/" target="_blank" aria-label="CodeSweetly"><i class="fas fa-arrow-alt-circle-right"></i></a>
         </section>
         <section id="tic-tac-toe-grid">
             <span class="cell r1 c1 d1"></span>
@@ -23,54 +23,57 @@
             <span class="cell r3 c3 d1"></span>
         </section>
         <section id="scoreboard">
-            <span class="scoreb-upper score">4</span>
-            <span class="scoreb-upper arrow"><i class="fas fa-caret-left"></i></span>
+            <span id="x-score" class="scoreb-upper score">0</span>
+            <span class="scoreb-upper"><i class="fas fa-caret-left"></i></span>
             <span id="congrat-text">
-                <p>Congragulations 1234567890123456</p>
-                <p>You are the Winner!</p>
+                <p id="main-congrat-text"></p>
+                <p id="sec-congrat-text"></p>
             </span>
-            <span class="scoreb-upper arrow"><i class="fas fa-caret-right"></i></span>
-            <span class="scoreb-upper score">3</span>
-            <span class="scoreb-lower player">Player X</span>
+            <span class="scoreb-upper"><i class="fas fa-caret-right"></i></span>
+            <span id="o-score" class="scoreb-upper score">0</span>
+            <span id="player-x-board-label" class="scoreb-lower player active-player">Player X</span>
             <button id="new-game-btn" class="scoreb-lower">New Game</button>
             <button id="next-round-btn" class="scoreb-lower">Next Round</button>
-            <span class="scoreb-lower player">Computer</span>
+            <span id="player-o-board-label" class="scoreb-lower player">Computer</span>
         </section>
-        
-        
         <aside id="settings-modal-bg">
             <div id="settings-modal-box">
-                <div id="close-settings-modal"><i class="fas fa-times"></i></div>
+                <i class="far fa-times-circle"></i>
                 <form>
-                    <label>Player X</label>
-                    <select>
-                        <option>Human</option>
-                        <option>Computer</option>
+                    <h2 id="player-x-details">Player X's Profile</h2>
+                    <select id="selectable-player-x" aria-labelledby="player-x-details">
+                        <option id="x-hum-opt" selected>Human</option>
+                        <option id="x-comp-opt">Computer</option>
                     </select>
-                    <select>
-                        <option>Easy</option>
+                    <select id="comp-x-diff-level" aria-labelledby="player-x-details">
+                        <option selected>Easy</option>
                         <option>Medium</option>
                         <option>Hard</option>
                     </select>
-                    <input type="text" maxlength="16" placeholder="Player X's Name">
+                    <input id="pl-x-name" type="text" maxlength="16" placeholder="Player X's Name" aria-label="Player X's Name">
                 </form>
                 <form>
-                    <label>Player O</label>
-                    <select>
-                        <option>Human</option>
-                        <option>Computer</option>
+                    <h2 id="player-o-details">Player O's Profile</h2>
+                    <select id="selectable-player-o" aria-labelledby="player-o-details">
+                        <option id="o-hum-opt">Human</option>
+                        <option id="o-comp-opt" selected>Computer</option>
                     </select>
-                    <select>
-                        <option>Easy</option>
+                    <select id="comp-o-diff-level" aria-labelledby="player-o-details">
+                        <option selected>Easy</option>
                         <option>Medium</option>
                         <option>Hard</option>
                     </select>
-                    <input type="text" maxlength="16" placeholder="Player O's Name">
+                    <input id="pl-o-name" type="text" maxlength="16" placeholder="Player O's Name" aria-label="Player O's Name">
                 </form>
-                <button id="sound"><i class="fas fa-volume-up"></i> ON</button>
+                <button class="sound sound-on" aria-label="Sound"><i class="fas fa-volume-up"></i></button>
                 <footer><a href="https://www.codesweetly.com/" target="_blank">Created by Oluwatobi Sofela <i class="fas fa-arrow-alt-circle-right"></i></a></footer>
             </div>
         </aside>
+        <audio id="x-played" src="assets/sounds/app_alert_tone_026.mp3"></audio>
+        <audio id="o-played" src="assets/sounds/multimedia_pop_up_alert_tone_3.mp3"></audio>
+        <audio id="winner" src="assets/sounds/zapsplat_musical_drum_roll_ta_da_24691.mp3"></audio>
+        <audio id="deadlock" src="assets/sounds/zapsplat_multimedia_game_sound_fun_arcade_organ_positive_win_expression_54270.mp3"></audio>
+        <audio id="lost" src="assets/sounds/zapsplat_cartoon_fail_brassy_synth_wah_001_45239.mp3"></audio>
         <script src="script.js"></script>
         <script src="https://kit.fontawesome.com/465e3a1049.js" crossorigin="anonymous"></script>
     </body>
