@@ -93,34 +93,38 @@
             }
             if (playerXBoardLabel.innerText === "Computer" || playerOBoardLabel.innerText === "Computer") {
                 compPlaysNow = true;
-                if (
-                    players.X.name() === "Computer" && compXdiffLevel.value === "Easy" ||
-                    players.O.name() === "Computer" && compOdiffLevel.value === "Easy"
-                    ) {
-                    console.log("Computer is playing easy");
-                    insertEasyCompMark();
-                } else if (
-                    players.X.name() === "Computer" && compXdiffLevel.value === "Medium" ||
-                    players.O.name() === "Computer" && compOdiffLevel.value === "Medium"
-                ) {
-                    console.log("Computer playing averagely...")
-                    const randomNumber = Math.random();
-                    console.log(`Random number = ${randomNumber}`);
-                    if (randomNumber > 0.3) {
-                        console.log("Average called HARD!");
-                        insertHardCompMark();
-                    } else {
-                        console.log("Average called easy!");
-                        insertEasyCompMark();
-                    }
-                } else {
-                    console.log("Computer is playing very hard");
-                    insertHardCompMark();
-                }
+                insertCompMark();
                 compPlaysNow = false;
             }
         } else {
             console.log("Game is over!!!!");
+        }
+    }
+
+    function insertCompMark() {
+        if (
+            players.X.name() === "Computer" && compXdiffLevel.value === "Easy" ||
+            players.O.name() === "Computer" && compOdiffLevel.value === "Easy"
+            ) {
+            console.log("Computer is playing easy");
+            insertEasyCompMark();
+        } else if (
+            players.X.name() === "Computer" && compXdiffLevel.value === "Medium" ||
+            players.O.name() === "Computer" && compOdiffLevel.value === "Medium"
+        ) {
+            console.log("Computer playing averagely...")
+            const randomNumber = Math.random();
+            console.log(`Random number = ${randomNumber}`);
+            if (randomNumber > 0.25) {
+                console.log("Average called HARD!");
+                insertHardCompMark();
+            } else {
+                console.log("Average called easy!");
+                insertEasyCompMark();
+            }
+        } else {
+            console.log("Computer is playing very hard");
+            insertHardCompMark();
         }
     }
 
@@ -382,48 +386,21 @@
             rightArrow.style.visibility = "hidden";
             gameCells.forEach(i => {
                 i.innerText = "";
-                console.log(`Cleared ${i}`);
                 i.style.color = "#4b3621";
             });
+            if (players.X.name() === "Computer") {
+                compPlaysNow = true;
+                insertCompMark();
+                nextMark = "O";
+            } else {
+                nextMark = "X";
+            }
             if (nextMark === "X") {
                 playerXBoardLabel.classList.add("active-player");
                 playerOBoardLabel.classList.remove("active-player");
             } else {
                 playerOBoardLabel.classList.add("active-player");
                 playerXBoardLabel.classList.remove("active-player");
-            }
-            if (players[nextMark].name() === "Computer") {
-                compPlaysNow = true;
-                if (
-                    players.X.name() === "Computer" && compXdiffLevel.value === "Easy" ||
-                    players.O.name() === "Computer" && compOdiffLevel.value === "Easy"
-                    ) {
-                    console.log("Computer is playing easy");
-                    insertEasyCompMark();
-                } else if (
-                    players.X.name() === "Computer" && compXdiffLevel.value === "Medium" ||
-                    players.O.name() === "Computer" && compOdiffLevel.value === "Medium"
-                ) {
-                    console.log("Computer playing averagely...")
-                    const randomNumber = Math.random();
-                    console.log(`Random number = ${randomNumber}`);
-                    if (randomNumber > 0.3) {
-                        console.log("Average called HARD!");
-                        insertHardCompMark();
-                    } else {
-                        console.log("Average called easy!");
-                        insertEasyCompMark();
-                    }
-                } else {
-                    console.log("Computer is playing very hard");
-                    insertHardCompMark();
-                }
-
-                if (players.X.name() === "Computer") {
-                    nextMark = "O";
-                } else {
-                    nextMark = "X";
-                }
             }
         }
     }
