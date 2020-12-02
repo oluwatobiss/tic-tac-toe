@@ -1,4 +1,4 @@
-(function() {
+// (function() {
     const openSettingsModalBtn = document.getElementById("open-settings-modal");
     const closeSettingsModalIcon = document.querySelector(".fa-times-circle");
     const settingsModalBg = document.getElementById("settings-modal-bg");
@@ -58,14 +58,15 @@
 
     let nextMark = "X";
     let soundOn = true;
+    let gameStarted = false;
     let gameOver = false;
     let activateNextRndBtn = false;
     let compPlaysNow = false;
 
-    gameCells.forEach(i => i.addEventListener("click", insertPlayersMark));
+    gameCells.forEach(c => c.addEventListener("click", insertPlayersMark));
     newGameBtn.addEventListener("click", startNewGame);
     nextRoundBtn.addEventListener("click", startNextRound);
-    openSettingsModalBtn.addEventListener("click", () => settingsModalBg.style.display = "block");
+    openSettingsModalBtn.addEventListener("click", openSettings);
     window.addEventListener("click", closeSettingsModalBox);
     selectablePlayerX.addEventListener("change", displayRequiredPlayerXSettings);
     selectablePlayerO.addEventListener("change", displayRequiredPlayerOSettings);
@@ -73,6 +74,7 @@
 
     function insertPlayersMark() {
         if (!this.innerText && !gameOver) {
+            gameStarted = true;
             if (soundOn) {
                 if (nextMark === "X") {
                     document.getElementById("x-played").play();
@@ -86,10 +88,35 @@
 
         if (!gameOver) {
             console.log("Game not over");
-            changeNextMark();
+            if (playerXBoardLabel.innerText !== "Computer" && playerOBoardLabel.innerText !== "Computer") {
+                changeNextMark();
+            }
             if (playerXBoardLabel.innerText === "Computer" || playerOBoardLabel.innerText === "Computer") {
                 compPlaysNow = true;
-                insertCompMark();
+                if (
+                    players.X.name() === "Computer" && compXdiffLevel.value === "Easy" ||
+                    players.O.name() === "Computer" && compOdiffLevel.value === "Easy"
+                    ) {
+                    console.log("Computer is playing easy");
+                    insertEasyCompMark();
+                } else if (
+                    players.X.name() === "Computer" && compXdiffLevel.value === "Medium" ||
+                    players.O.name() === "Computer" && compOdiffLevel.value === "Medium"
+                ) {
+                    console.log("Computer playing averagely...")
+                    const randomNumber = Math.random();
+                    console.log(`Random number = ${randomNumber}`);
+                    if (randomNumber > 0.3) {
+                        console.log("Average called HARD!");
+                        insertHardCompMark();
+                    } else {
+                        console.log("Average called easy!");
+                        insertEasyCompMark();
+                    }
+                } else {
+                    console.log("Computer is playing very hard");
+                    insertHardCompMark();
+                }
                 compPlaysNow = false;
             }
         } else {
@@ -97,23 +124,159 @@
         }
     }
 
-    function insertCompMark() {
-        console.log("Computer's code activated!")
+    function insertEasyCompMark() {
+        console.log("Computer's code activated!");
+
+        gameStarted = true;
+        let compMark = "";
+
+        if (players.X.name() === "Computer") {
+            compMark = "X";
+        } else if (players.O.name() === "Computer") {
+            compMark = "O";
+        }
+
         if (compPlaysNow && (playerXBoardLabel.innerText === "Computer" || playerOBoardLabel.innerText === "Computer")) {
-            let emptyCells = [];
-            gameCells.forEach(i => {
-                if (i.innerText === "") {
-                    emptyCells.push(i);
+            const emptyCells = [];
+            gameCells.forEach(c => {
+                if (c.innerText === "") {
+                    emptyCells.push(c);
                 }
             })
             const cellNumToPlayOn = Math.floor(Math.random() * emptyCells.length);
-            emptyCells[cellNumToPlayOn].innerText = nextMark;
+            emptyCells[cellNumToPlayOn].innerText = compMark;
             compPlaysNow = false;
             checkCellsEquality();
         }
+    }
 
-        if (!gameOver) {
-            changeNextMark();
+    function insertHardCompMark() {
+        if (compPlaysNow && (playerXBoardLabel.innerText === "Computer" || playerOBoardLabel.innerText === "Computer")) {
+            gameStarted = true;
+            let aiMark = "";
+            let humanMark = "";
+
+            if (players.X.name() === "Computer") {
+                aiMark = "X";
+                humanMark = "O";
+            } else if (players.O.name() === "Computer") {
+                aiMark = "O";
+                humanMark = "X";
+            }
+            
+            const currentBoardState = [];
+            gameCells.forEach((c, i) => {
+                if (c.innerText) {
+                    currentBoardState.push(c.innerText);
+                } else {
+                    currentBoardState.push(i);
+                }
+            });
+
+            console.log(currentBoardState);
+
+            const bestCellNumToPlayOn = minimax(currentBoardState, aiMark);
+            console.log(bestCellNumToPlayOn);
+            console.log(bestCellNumToPlayOn.index);
+            gameCells[bestCellNumToPlayOn.index].innerText = aiMark;
+            compPlaysNow = false;
+            checkCellsEquality();
+
+            function minimax(currBdSt, currMark) {
+                const availCellsIndexes = getAllEmptyCellsIndexes(currBdSt);
+            
+                // Check if a terminal state (i.e., win, lose, or tie) is found. If so, return the appropriate score:
+                if (checkIfWinnerFound(currBdSt, humanMark)) {
+                    return {score: -1};
+                } else if (checkIfWinnerFound(currBdSt, aiMark)) {
+                    return {score: 1};
+                } else if (availCellsIndexes.length === 0) {
+                    return {score: 0};
+                }
+                
+                /** 
+                 If no terminal state is found, test the outcome of playing the current mark (currMark) on each of the
+                current board's empty cells. Then, record your findings in an array.
+                */
+
+                // Create array to store all analysis of each test gameplay:
+                const allTestPlayInfos = [];
+            
+                // Loop through each of the empty cells starting from the first empty cell:
+                for (let i = 0; i < availCellsIndexes.length; i++) {
+                    const currentTestPlayInfo = {};
+
+                    // Save the index number of the empty cell currently being processed:
+                    currentTestPlayInfo.index = currBdSt[availCellsIndexes[i]];
+            
+                    // Temporarily set the empty cell currently being processed to the current player's mark:
+                    currBdSt[availCellsIndexes[i]] = currMark;
+                    
+                    // Then recursively run the minimax function on the new current board and save the returned score
+                    //when a terminal state is found:
+                    if (currMark === aiMark) {
+                        const result = minimax(currBdSt, humanMark);
+                        currentTestPlayInfo.score = result.score;
+                    } else {
+                        const result = minimax(currBdSt, aiMark);
+                        currentTestPlayInfo.score = result.score;
+                    }
+                    
+                    // Reset the current empty cell being processed back to its index number:
+                    currBdSt[availCellsIndexes[i]] = currentTestPlayInfo.index;
+            
+                    // Save the details of this trial play to the allTestPlayInfos array:
+                    allTestPlayInfos.push(currentTestPlayInfo);
+                }
+
+                /** 
+                 Evaluate each score in the allTestPlayInfos array to choose the trial play that is the 
+                best/winning game play.
+                */
+                let bestTestPlay = null;
+                if (currMark === aiMark) {
+                    let bestScore = -Infinity;
+                    for (let i = 0; i < allTestPlayInfos.length; i++) {
+                        if (allTestPlayInfos[i].score > bestScore) {
+                            bestScore = allTestPlayInfos[i].score;
+                            bestTestPlay = i;
+                        }
+                    }
+                } else {
+                    let bestScore = Infinity;
+                    for (let i = 0; i < allTestPlayInfos.length; i++) {
+                        if (allTestPlayInfos[i].score < bestScore) {
+                            bestScore = allTestPlayInfos[i].score;
+                            bestTestPlay = i;
+                        }
+                    }
+                }
+                
+                // Retrieve the bestScore's object from the allTestPlayInfos array and make it the return
+                // value of this minimax function:
+                return allTestPlayInfos[bestTestPlay];
+            }
+
+            function getAllEmptyCellsIndexes(currBdSt) {
+                return currBdSt.filter(v => v != "O" && v != "X");
+            }
+
+            function checkIfWinnerFound(currBdSt, currMark) {
+                if (
+                    (currBdSt[0] === currMark && currBdSt[1] === currMark && currBdSt[2] === currMark) ||
+                    (currBdSt[3] === currMark && currBdSt[4] === currMark && currBdSt[5] === currMark) ||
+                    (currBdSt[6] === currMark && currBdSt[7] === currMark && currBdSt[8] === currMark) ||
+                    (currBdSt[0] === currMark && currBdSt[3] === currMark && currBdSt[6] === currMark) ||
+                    (currBdSt[1] === currMark && currBdSt[4] === currMark && currBdSt[7] === currMark) ||
+                    (currBdSt[2] === currMark && currBdSt[5] === currMark && currBdSt[8] === currMark) ||
+                    (currBdSt[0] === currMark && currBdSt[4] === currMark && currBdSt[8] === currMark) ||
+                    (currBdSt[2] === currMark && currBdSt[4] === currMark && currBdSt[6] === currMark)
+                    ) {
+                        return true;
+                    } else {
+                        return false;
+                    }
+            }
         }
     }
 
@@ -168,14 +331,16 @@
                 players[cellValues[cellValuesKeys[i]][0]].score++;
                 players[cellValues[cellValuesKeys[i]][0]].showUpdatedScore();
                 if (players[cellValues[cellValuesKeys[i]][0]].name() === "Computer") {
-                    if (soundOn) {document.getElementById("lost").play();}
                     gameOver = true;
+                    gameStarted = false;
+                    if (soundOn) {document.getElementById("lost").play();}
                     rowsColsAndDiags[rowsColsAndDiagsKeys[i]].forEach(i => i.style.color = "green");
                     mainCongratText.innerText = "Sorry, You lost this round";
                     mainCongratText.style.color = "#922724";
                 } else {
-                    if (soundOn) {document.getElementById("winner").play();}
                     gameOver = true;
+                    gameStarted = false;
+                    if (soundOn) {document.getElementById("winner").play();}
                     rowsColsAndDiags[rowsColsAndDiagsKeys[i]].forEach(i => i.style.color = "green");
                     mainCongratText.innerText = `Congratulations ${players[cellValues[cellValuesKeys[i]][0]].name()}`;
                     secCongratText.innerText = `You are the winner`;
@@ -185,6 +350,7 @@
 
         if (Array.from(gameCells).every(i => i.innerText) && !gameOver) {
             gameOver = true;
+            gameStarted = false;
             activateNextRndBtn = true;
             if (soundOn) {document.getElementById("deadlock").play();}
             playerXBoardLabel.classList.remove("active-player");
@@ -195,16 +361,13 @@
 
     function startNewGame() {
         nextMark = "X";
+        gameStarted = false;
         activateNextRndBtn = true;
         startNextRound();
         players.X.score = 0;
         players.O.score = 0;
         xScore.innerText = 0;
         oScore.innerText = 0;
-        if (players.X.name() === "Computer") {
-            compPlaysNow = true;
-            insertCompMark();
-        }
     }
 
     function startNextRound() {
@@ -219,6 +382,7 @@
             rightArrow.style.visibility = "hidden";
             gameCells.forEach(i => {
                 i.innerText = "";
+                console.log(`Cleared ${i}`);
                 i.style.color = "#4b3621";
             });
             if (nextMark === "X") {
@@ -230,8 +394,45 @@
             }
             if (players[nextMark].name() === "Computer") {
                 compPlaysNow = true;
-                insertCompMark();
+                if (
+                    players.X.name() === "Computer" && compXdiffLevel.value === "Easy" ||
+                    players.O.name() === "Computer" && compOdiffLevel.value === "Easy"
+                    ) {
+                    console.log("Computer is playing easy");
+                    insertEasyCompMark();
+                } else if (
+                    players.X.name() === "Computer" && compXdiffLevel.value === "Medium" ||
+                    players.O.name() === "Computer" && compOdiffLevel.value === "Medium"
+                ) {
+                    console.log("Computer playing averagely...")
+                    const randomNumber = Math.random();
+                    console.log(`Random number = ${randomNumber}`);
+                    if (randomNumber > 0.3) {
+                        console.log("Average called HARD!");
+                        insertHardCompMark();
+                    } else {
+                        console.log("Average called easy!");
+                        insertEasyCompMark();
+                    }
+                } else {
+                    console.log("Computer is playing very hard");
+                    insertHardCompMark();
+                }
+
+                if (players.X.name() === "Computer") {
+                    nextMark = "O";
+                } else {
+                    nextMark = "X";
+                }
             }
+        }
+    }
+
+    function openSettings() {
+        if (!gameStarted) {
+            settingsModalBg.style.display = "block";
+        } else {
+            alert("Sorry, you can't change the settings while the game is on. Please finish this round first.");
         }
     }
 
@@ -240,10 +441,8 @@
             settingsModalBg.style.display = "none";
             playerXBoardLabel.innerText = players.X.name();
             playerOBoardLabel.innerText = players.O.name();
-            if (players.X.name() === "Computer") {
-                compPlaysNow = true;
-                insertCompMark();
-            }
+            activateNextRndBtn = true;
+            startNextRound();
         }
     }
 
@@ -286,4 +485,4 @@
         soundBtn.classList.toggle("sound-on");
         soundBtn.classList.toggle("sound-off");
     }
-})();
+// })();
