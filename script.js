@@ -1,4 +1,4 @@
-// (function() {
+(function() {
     const openSettingsModalBtn = document.getElementById("open-settings-modal");
     const closeSettingsModalIcon = document.querySelector(".fa-times-circle");
     const settingsModalBg = document.getElementById("settings-modal-bg");
@@ -29,11 +29,8 @@
         X: {
             score: 0,
             name() {
-                if (selectablePlayerX.value === "Human") {
-                    return playerXName.value || "Player X";
-                } else {
-                    return "Computer";
-                }
+                return (selectablePlayerX.value === "Human") ? playerXName.value || "Player X"
+                : "Computer";
             },
             showUpdatedScore() {
                 xScore.innerText = this.score;
@@ -43,11 +40,8 @@
         O: {
             score: 0,
             name() {
-                if (selectablePlayerO.value === "Human") {
-                    return playerOName.value || "Player O";
-                } else {
-                    return "Computer";
-                }
+                return (selectablePlayerO.value === "Human") ? playerOName.value || "Player O"
+                : "Computer";
             },
             showUpdatedScore() {
                 oScore.innerText = this.score;
@@ -76,18 +70,13 @@
         if (!this.innerText && !gameOver) {
             gameStarted = true;
             if (soundOn) {
-                if (nextMark === "X") {
-                    document.getElementById("x-played").play();
-                } else {
-                    document.getElementById("o-played").play();
-                }
+                (nextMark === "X") ? document.getElementById("x-played").play()
+                : document.getElementById("o-played").play();
             }
             this.innerText = nextMark;
             checkCellsEquality();
         }
-
         if (!gameOver) {
-            console.log("Game not over");
             if (playerXBoardLabel.innerText !== "Computer" && playerOBoardLabel.innerText !== "Computer") {
                 changeNextMark();
             }
@@ -96,8 +85,6 @@
                 insertCompMark();
                 compPlaysNow = false;
             }
-        } else {
-            console.log("Game is over!!!!");
         }
     }
 
@@ -106,31 +93,19 @@
             players.X.name() === "Computer" && compXdiffLevel.value === "Easy" ||
             players.O.name() === "Computer" && compOdiffLevel.value === "Easy"
             ) {
-            console.log("Computer is playing easy");
             insertEasyCompMark();
         } else if (
             players.X.name() === "Computer" && compXdiffLevel.value === "Medium" ||
             players.O.name() === "Computer" && compOdiffLevel.value === "Medium"
         ) {
-            console.log("Computer playing averagely...")
             const randomNumber = Math.random();
-            console.log(`Random number = ${randomNumber}`);
-            if (randomNumber > 0.25) {
-                console.log("Average called HARD!");
-                insertHardCompMark();
-            } else {
-                console.log("Average called easy!");
-                insertEasyCompMark();
-            }
+            (randomNumber > 0.15) ? insertHardCompMark() : insertEasyCompMark();
         } else {
-            console.log("Computer is playing very hard");
             insertHardCompMark();
         }
     }
 
     function insertEasyCompMark() {
-        console.log("Computer's code activated!");
-
         gameStarted = true;
         let compMark = "";
 
@@ -139,13 +114,10 @@
         } else if (players.O.name() === "Computer") {
             compMark = "O";
         }
-
         if (compPlaysNow && (playerXBoardLabel.innerText === "Computer" || playerOBoardLabel.innerText === "Computer")) {
             const emptyCells = [];
             gameCells.forEach(c => {
-                if (c.innerText === "") {
-                    emptyCells.push(c);
-                }
+                if (c.innerText === "") {emptyCells.push(c);}
             })
             const cellNumToPlayOn = Math.floor(Math.random() * emptyCells.length);
             emptyCells[cellNumToPlayOn].innerText = compMark;
@@ -170,18 +142,10 @@
             
             const currentBoardState = [];
             gameCells.forEach((c, i) => {
-                if (c.innerText) {
-                    currentBoardState.push(c.innerText);
-                } else {
-                    currentBoardState.push(i);
-                }
+                (c.innerText) ? currentBoardState.push(c.innerText) : currentBoardState.push(i);
             });
 
-            console.log(currentBoardState);
-
             const bestCellNumToPlayOn = minimax(currentBoardState, aiMark);
-            console.log(bestCellNumToPlayOn);
-            console.log(bestCellNumToPlayOn.index);
             gameCells[bestCellNumToPlayOn.index].innerText = aiMark;
             compPlaysNow = false;
             checkCellsEquality();
@@ -213,11 +177,11 @@
                     // Save the index number of the empty cell currently being processed:
                     currentTestPlayInfo.index = currBdSt[availCellsIndexes[i]];
             
-                    // Temporarily set the empty cell currently being processed to the current player's mark:
+                    // Temporarily place the current player’s mark on the cell for-loop is currently processing:
                     currBdSt[availCellsIndexes[i]] = currMark;
                     
-                    // Then recursively run the minimax function on the new current board and save the returned score
-                    //when a terminal state is found:
+                    // Then recursively run the minimax function on the new current board and save the returned
+                    // score -- when a terminal state is found:
                     if (currMark === aiMark) {
                         const result = minimax(currBdSt, humanMark);
                         currentTestPlayInfo.score = result.score;
@@ -262,7 +226,7 @@
             }
 
             function getAllEmptyCellsIndexes(currBdSt) {
-                return currBdSt.filter(v => v != "O" && v != "X");
+                return currBdSt.filter(i => i != "X" && i != "O");
             }
 
             function checkIfWinnerFound(currBdSt, currMark) {
@@ -287,12 +251,10 @@
     function changeNextMark() {
         playerXBoardLabel.classList.toggle("active-player");
         playerOBoardLabel.classList.toggle("active-player");
-        if (nextMark === "X") {
-            nextMark = "O";
-        } else if (nextMark === "O") {
-            nextMark = "X";
+        switch (nextMark) {
+            case "X": nextMark = "O"; break;
+            default: nextMark = "X";
         }
-        console.log(nextMark);
     }
 
     function checkCellsEquality() {
@@ -327,31 +289,31 @@
         for (let i = 0; i < rowsColsAndDiagsKeys.length; i++) {
             rowsColsAndDiags[rowsColsAndDiagsKeys[i]].forEach(c => cellValues[cellValuesKeys[i]].push(c.innerText));
         }
-
         for (let i = 0; i < cellValuesKeys.length; i++) {
             if (cellValues[cellValuesKeys[i]].every(v => v === cellValues[cellValuesKeys[i]][0] && v !== "")) {
                 playerXBoardLabel.classList.remove("active-player");
                 playerOBoardLabel.classList.remove("active-player");
                 players[cellValues[cellValuesKeys[i]][0]].score++;
                 players[cellValues[cellValuesKeys[i]][0]].showUpdatedScore();
-                if (players[cellValues[cellValuesKeys[i]][0]].name() === "Computer") {
-                    gameOver = true;
-                    gameStarted = false;
-                    if (soundOn) {document.getElementById("lost").play();}
-                    rowsColsAndDiags[rowsColsAndDiagsKeys[i]].forEach(i => i.style.color = "green");
-                    mainCongratText.innerText = "Sorry, You lost this round";
-                    mainCongratText.style.color = "#922724";
-                } else {
-                    gameOver = true;
-                    gameStarted = false;
-                    if (soundOn) {document.getElementById("winner").play();}
-                    rowsColsAndDiags[rowsColsAndDiagsKeys[i]].forEach(i => i.style.color = "green");
-                    mainCongratText.innerText = `Congratulations ${players[cellValues[cellValuesKeys[i]][0]].name()}`;
-                    secCongratText.innerText = `You are the winner`;
+                switch (players[cellValues[cellValuesKeys[i]][0]].name()) {
+                    case "Computer":
+                        gameOver = true;
+                        gameStarted = false;
+                        if (soundOn) {document.getElementById("lost").play();}
+                        rowsColsAndDiags[rowsColsAndDiagsKeys[i]].forEach(i => i.style.color = "green");
+                        mainCongratText.innerText = "Sorry, You lost this round";
+                        mainCongratText.style.color = "#922724";
+                        break;
+                    default:
+                        gameOver = true;
+                        gameStarted = false;
+                        if (soundOn) {document.getElementById("winner").play();}
+                        rowsColsAndDiags[rowsColsAndDiagsKeys[i]].forEach(i => i.style.color = "green");
+                        mainCongratText.innerText = `Congratulations ${players[cellValues[cellValuesKeys[i]][0]].name()}`;
+                        secCongratText.innerText = "You are the winner";
                 }
             }
         }
-
         if (Array.from(gameCells).every(i => i.innerText) && !gameOver) {
             gameOver = true;
             gameStarted = false;
@@ -375,7 +337,6 @@
     }
 
     function startNextRound() {
-        console.log(nextMark);
         if (gameOver || activateNextRndBtn) {
             gameOver = false;
             activateNextRndBtn = false;
@@ -388,29 +349,29 @@
                 i.innerText = "";
                 i.style.color = "#4b3621";
             });
-            if (players.X.name() === "Computer") {
-                compPlaysNow = true;
-                insertCompMark();
-                nextMark = "O";
-            } else {
-                nextMark = "X";
+            switch (players.X.name()) {
+                case "Computer":
+                    compPlaysNow = true;
+                    insertCompMark();
+                    nextMark = "O";
+                    break;
+                default: nextMark = "X";
             }
-            if (nextMark === "X") {
-                playerXBoardLabel.classList.add("active-player");
-                playerOBoardLabel.classList.remove("active-player");
-            } else {
-                playerOBoardLabel.classList.add("active-player");
-                playerXBoardLabel.classList.remove("active-player");
+            switch (nextMark) {
+                case "X":
+                    playerXBoardLabel.classList.add("active-player");
+                    playerOBoardLabel.classList.remove("active-player");
+                    break;
+                default:
+                    playerOBoardLabel.classList.add("active-player");
+                    playerXBoardLabel.classList.remove("active-player");
             }
         }
     }
 
     function openSettings() {
-        if (!gameStarted) {
-            settingsModalBg.style.display = "block";
-        } else {
-            alert("Sorry, you can't change the settings while the game is on. Please finish this round first.");
-        }
+        (!gameStarted) ? settingsModalBg.style.display = "block"
+        : alert("Sorry, you can't change the settings while the game is on. Please finish this round first.");
     }
 
     function closeSettingsModalBox(objClicked) {
@@ -424,34 +385,38 @@
     }
 
     function displayRequiredPlayerXSettings() {
-        if (selectablePlayerX.value === "Human") {
-            playerXName.style.display = "block";
-            compXdiffLevel.style.display = "none";
-            oComputerOption.removeAttribute("disabled");
-        } else if (selectablePlayerX.value === "Computer") {
-            compXdiffLevel.style.display = "block";
-            playerXName.style.display = "none";
-            oHumanOption.selected = true;
-            oComputerOption.disabled = true;
-            playerOName.style.display = "block";
-            compOdiffLevel.style.display = "none";
-            oComputerOption.removeAttribute("selected");
+        switch (selectablePlayerX.value) {
+            case "Human":
+                playerXName.style.display = "block";
+                compXdiffLevel.style.display = "none";
+                oComputerOption.removeAttribute("disabled");
+                break;
+            default:
+                compXdiffLevel.style.display = "block";
+                playerXName.style.display = "none";
+                oHumanOption.selected = true;
+                oComputerOption.disabled = true;
+                playerOName.style.display = "block";
+                compOdiffLevel.style.display = "none";
+                oComputerOption.removeAttribute("selected");
         }
     }
 
     function displayRequiredPlayerOSettings() {
-        if (selectablePlayerO.value === "Human") {
-            playerOName.style.display = "block";
-            compOdiffLevel.style.display = "none";
-            xComputerOption.removeAttribute("disabled");
-        } else if (selectablePlayerO.value === "Computer") {
-            compOdiffLevel.style.display = "block";
-            playerOName.style.display = "none";
-            xHumanOption.selected = true;
-            xComputerOption.disabled = true;
-            playerXName.style.display = "block";
-            compXdiffLevel.style.display = "none";
-            xComputerOption.removeAttribute("selected");
+        switch (selectablePlayerO.value) {
+            case "Human":
+                playerOName.style.display = "block";
+                compOdiffLevel.style.display = "none";
+                xComputerOption.removeAttribute("disabled");
+                break;
+            default:
+                compOdiffLevel.style.display = "block";
+                playerOName.style.display = "none";
+                xHumanOption.selected = true;
+                xComputerOption.disabled = true;
+                playerXName.style.display = "block";
+                compXdiffLevel.style.display = "none";
+                xComputerOption.removeAttribute("selected");
         }
     }
 
@@ -462,4 +427,4 @@
         soundBtn.classList.toggle("sound-on");
         soundBtn.classList.toggle("sound-off");
     }
-// })();
+})();
